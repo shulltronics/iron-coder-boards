@@ -1,7 +1,0 @@
-name = "ssid_list"
-location = "/home/carstentb/Projects/iron-coder/boards/Adafruit/Feather_nRF52840/examples/test"
-
-[[boards]]
-name = "Feather nRF52840 Express"
-manufacturer = "Adafruit"
-standard = "Feather"
