@@ -1,0 +1,1 @@
+/home/carstentb/Projects/iron-coder/boards/Adafruit/FeatherWing_propmaker/bsp/target/debug/libiron_coder_featherwing_propmaker_bsp.rlib: /home/carstentb/Projects/iron-coder/boards/Adafruit/FeatherWing_propmaker/bsp/src/lib.rs

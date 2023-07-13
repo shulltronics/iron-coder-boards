@@ -1,0 +1,3 @@
+cargo:rerun-if-changed=build/main.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/home/carstentb/Projects/iron-coder/boards/Adafruit/FeatherWing_propmaker/bsp/target/debug/build/typenum-16de063e650185aa/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/home/carstentb/Projects/iron-coder/boards/Adafruit/FeatherWing_propmaker/bsp/target/debug/build/typenum-16de063e650185aa/out/op.rs
