@@ -1,0 +1,14 @@
+
+name = "Feather nRF52840 Express"
+manufacturer = "Adafruit"
+is_main_board = true
+standard = "Feather"
+
+bsp = "iron-coder-feather-nrf52840-bsp"
+
+[[pinout]]
+pins = [8, 9]
+interface = { iface_type = "I2C", direction = "Output" }
+[[pinout]]
+pins = [0, 1, 2]
+inferface = { iface_type = "SPI", direction = "Bidirectional"}
