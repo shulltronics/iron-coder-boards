@@ -18,7 +18,9 @@ use feather::hal::{
 	gpio::pin::PushPullOutput,
 	gpio::pin::bank0::*,		// all gpios into scope
 	gpio::FunctionI2C,
+	gpio::FunctionSpi,
 	I2C,
+	Spi,
 	pio::PIOExt,
 };
 
@@ -48,7 +50,7 @@ unsafe fn USBCTRL_IRQ() {
     };
 }
 
-type OnboardLed = Pin<Gpio13, PushPullOutput>;
+pub type OnboardLed = Pin<Gpio13, PushPullOutput>;
 
 type OnboardNeopixel = Ws2812Direct<
     feather::hal::pac::PIO0,
@@ -61,11 +63,27 @@ pub type I2CBus = I2C<
 	(Pin<Gpio2, FunctionI2C>, Pin<Gpio3, FunctionI2C>)
 >;
 
+pub type SPIBus = Spi<
+	adafruit_feather_rp2040::hal::spi::Enabled,
+	pac::SPI0,
+	8,
+>;
+
+pub type Cs = Pin<Gpio6, PushPullOutput>;
+pub type Rst = Pin<Gpio7, PushPullOutput>;
+pub type Dc = Pin<Gpio25, PushPullOutput>;
+
 pub struct Board {
-	red_led: OnboardLed,
+	// pub pins: Pins,
+	pub d4: Option<Pin<Gpio6, PushPullOutput>>,
+	pub d5: Option<Pin<Gpio7, PushPullOutput>>,
+	pub d24: Option<Pin<Gpio24, PushPullOutput>>,
+	pub d25: Option<Pin<Gpio25, PushPullOutput>>,
+	pub red_led: OnboardLed,
 	neopixel: OnboardNeopixel,
-	pub i2c_bus: Option<I2CBus>,
-	delay_timer: Delay,
+	pub i2c_manager: shared_bus::BusManagerSimple<I2CBus>,//Option<I2CBus>,
+	pub spi_bus: Option<SPIBus>,
+	pub delay_timer: Delay,
 	pub test: Option<bool>,
 	usb: &'static mut UsbManager,
 }
@@ -121,6 +139,21 @@ impl Board {
 			&mut pac.RESETS,
 			&clocks.system_clock,
 		);
+		// Create the bus manager
+		let i2c_manager = shared_bus::BusManagerSimple::new(i2c1);
+
+		let mosi = pins.mosi.into_mode::<FunctionSpi>();
+		let miso = pins.miso.into_mode::<FunctionSpi>();
+		let sclk = pins.sclk.into_mode::<FunctionSpi>();
+		let spi = Spi::<_, _, 8>::new(pac.SPI0);
+
+		// Exchange the uninitialised SPI driver for an initialised one
+		let mut spi = spi.init(
+			&mut pac.RESETS,
+			clocks.peripheral_clock.freq(),
+			16.MHz(),
+			&embedded_hal::spi::MODE_0,
+		);
 
 		// setup the general-purpose delay timer
 		let dt = Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
@@ -137,9 +170,14 @@ impl Board {
     	);
 
 		Self {
+			d4: Some(pins.d4.into_mode::<PushPullOutput>()),
+			d5: Some(pins.d5.into_mode::<PushPullOutput>()),
+			d24: Some(pins.d24.into_mode::<PushPullOutput>()),
+			d25: Some(pins.d25.into_mode::<PushPullOutput>()),
 			red_led: pins.d13.into_push_pull_output(),
 			neopixel: np,
-			i2c_bus: Some(i2c1),
+			i2c_manager: i2c_manager,//Some(i2c1),
+			spi_bus: Some(spi),
 			delay_timer: dt,
 			test: Some(true),
 			usb: usb,

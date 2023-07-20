@@ -13,9 +13,13 @@ bsp = "iron-coder-feather-rp2040-bsp"
 
 # Each element of the Pinout Vec should be prefaced with [[pinout]]
 [[pinout]]
-pins = [0, 1]
+pins = ["rx", "tx"]
 interface = { iface_type = "UART", direction = "Bidirectional" }
 
 [[pinout]]
-pins = [8, 9]
+pins = ["scl", "sda"]
 interface = { iface_type = "I2C", direction = "Output" }
+
+[[pinout]]
+pins = ["mosi", "miso", "sclk"]
+interface = { iface_type = "SPI", direction = "Output" }

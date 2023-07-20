@@ -1,3 +1,0 @@
-cargo:rustc-link-search=/home/carstentb/Projects/iron-coder/boards/Adafruit/Feather_RP2040/bsp/target/debug/build/rp2040-pac-b287c06b92de6b59/out
-cargo:rerun-if-changed=device.x
-cargo:rerun-if-changed=build.rs
